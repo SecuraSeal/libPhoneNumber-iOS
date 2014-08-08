@@ -72,7 +72,8 @@
 
 - (id)initWithCoder:(NSCoder*)coder
 {
-    if (self = [super init]) {
+    if ((self = [super init]))
+    {
         self.pattern = [coder decodeObjectForKey:@"pattern"];
         self.format = [coder decodeObjectForKey:@"format"];
         self.leadingDigitsPatterns = [coder decodeObjectForKey:@"leadingDigitsPatterns"];

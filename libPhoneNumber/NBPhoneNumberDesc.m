@@ -54,7 +54,8 @@
 
 - (id)initWithCoder:(NSCoder*)coder
 {
-    if (self = [super init]) {
+    if ((self = [super init]))
+    {
         self.nationalNumberPattern = [coder decodeObjectForKey:@"nationalNumberPattern"];
         self.possibleNumberPattern = [coder decodeObjectForKey:@"possibleNumberPattern"];
         self.exampleNumber = [coder decodeObjectForKey:@"exampleNumber"];
@@ -100,6 +101,15 @@
     return [self.nationalNumberPattern isEqual:other.nationalNumberPattern] &&
         [self.possibleNumberPattern isEqual:other.possibleNumberPattern] &&
         [self.exampleNumber isEqual:other.exampleNumber];
+}
+
+- (NSUInteger)hash
+{
+    NSUInteger hash = [self.nationalNumberPattern hash];
+    hash = hash ^ [self.possibleNumberPattern hash];
+    hash = hash ^ [self.exampleNumber hash];
+    
+    return hash;
 }
 
 @end

@@ -14,6 +14,11 @@
 #import "NBNumberFormat.h"
 #import "NSArray+NBAdditions.h"
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
+#pragma clang diagnostic ignored "-Wextra-semi"
+#pragma clang diagnostic ignored "-Wassign-enum"
+#pragma clang diagnostic ignored "-Wsign-compare"
 
 @interface NBAsYouTypeFormatter ()
 
@@ -316,6 +321,39 @@
     return self;
 }
 
+- (NSString *)setInput:(NSString *)input
+{
+    self.accruedInput_ = [input mutableCopy];
+    self.originalPosition_ = self.accruedInput_.length;
+    return [self attemptToChooseFormattingPattern_];
+}
+
+- (BOOL)formatPhoneNumber:(UITextField *)phoneNumberField newString:(NSString *)newString
+{
+    NSString *formatted = nil;
+    if (newString && newString.length > 0)
+    {
+        formatted = [self inputDigitAndRememberPosition:newString];
+    }
+    else
+    {
+        formatted = [self removeLastDigitAndRememberPosition];
+    }
+    
+    phoneNumberField.text = formatted;
+    
+    NSInteger position = self.getRememberedPosition;
+    if (position > 0)
+    {
+        UITextPosition *start = [phoneNumberField positionFromPosition:[phoneNumberField beginningOfDocument]
+                                                                offset:position];
+        [phoneNumberField setSelectedTextRange:[phoneNumberField textRangeFromPosition:start toPosition:start]];
+    }
+    
+    return YES;
+}
+
+
 /**
  * The metadata needed by this class is the same for all regions sharing the
  * same country calling code. Therefore, we return the metadata for "main"
@@ -587,7 +625,10 @@
     
     for (unsigned int i=0; i<accruedInputWithoutFormatting.length - 1; i++) {
         NSString *ch = [accruedInputWithoutFormatting substringWithRange:NSMakeRange(i, 1)];
-        result = [self inputDigitAndRememberPosition:ch];
+        if (ch)
+        {
+            result = [self inputDigitAndRememberPosition:ch];
+        }
     }
     
     return result;
@@ -714,7 +755,11 @@
         // NDDs. If that is the case, we might be able to do formatting again after
         // extracting them.
         if (self.inputHasFormatting_) {
-            return [NSString stringWithString:self.accruedInput_];
+            if (self.accruedInput_)
+            {
+                return [NSString stringWithString:self.accruedInput_];
+            }
+            return @"";
         }
         else if ([self attemptToExtractIdd_]) {
             if ([self attemptToExtractCountryCallingCode_]) {
@@ -1240,3 +1285,5 @@
 }
 
 @end
+
+#pragma clang diagnostic pop

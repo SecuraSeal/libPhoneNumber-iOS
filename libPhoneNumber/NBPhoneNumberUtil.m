@@ -14,6 +14,14 @@
 #import "NBMetadataHelper.h"
 #import <math.h>
 
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wdocumentation"
+#pragma clang diagnostic ignored "-Wextra-semi"
+#pragma clang diagnostic ignored "-Wassign-enum"
+#pragma clang diagnostic ignored "-Wsign-compare"
+#pragma clang diagnostic ignored "-Wdirect-ivar-access"
+
+
 #if TARGET_OS_IPHONE
     #import <CoreTelephony/CTTelephonyNetworkInfo.h>
     #import <CoreTelephony/CTCarrier.h>
@@ -189,7 +197,7 @@ static NSDictionary *DIGIT_MAPPINGS;
 }
 
 
-- (NSRegularExpression *)regularExpressionWithPattern:(NSString *)pattern options:(NSRegularExpressionOptions)options error:(NSError **)error
+- (NSRegularExpression *)regularExpressionWithPattern:(NSString *)pattern options:(NSRegularExpressionOptions)options error:(NSError * __autoreleasing *)error
 {
     [lockPatternCache lock];
     
@@ -421,7 +429,6 @@ static NSDictionary *DIGIT_MAPPINGS;
     
     return self;
 }
-
 
 - (void)initRegularExpressionSet
 {
@@ -741,7 +748,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     which clients want to know the length of the area code.
  * @return {number} the length of area code of the PhoneNumber object passed in.
  */
-- (int)getLengthOfGeographicalAreaCode:(NBPhoneNumber*)phoneNumber error:(NSError **)error
+- (int)getLengthOfGeographicalAreaCode:(NBPhoneNumber*)phoneNumber error:(NSError * __autoreleasing *)error
 {
     int res = 0;
     @try {
@@ -819,7 +826,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     which clients want to know the length of the NDC.
  * @return {number} the length of NDC of the PhoneNumber object passed in.
  */
-- (int)getLengthOfNationalDestinationCode:(NBPhoneNumber*)phoneNumber error:(NSError **)error
+- (int)getLengthOfNationalDestinationCode:(NBPhoneNumber*)phoneNumber error:(NSError * __autoreleasing *)error
 {
     int res = 0;
     
@@ -1037,6 +1044,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     phone number should be formatted into.
  * @return {string} the formatted phone number.
  */
+
 - (NSString *)format:(NBPhoneNumber*)phoneNumber numberFormat:(NBEPhoneNumberFormat)numberFormat error:(NSError**)error
 {
     NSString *res = nil;
@@ -1292,6 +1300,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     using the number's preferred_domestic_carrier_code, or the
  *     {@code fallbackCarrierCode} passed in if none is found.
  */
+
 - (NSString *)formatNationalNumberWithPreferredCarrierCode:(NBPhoneNumber*)number
                                       fallbackCarrierCode:(NSString *)fallbackCarrierCode error:(NSError **)error
 {
@@ -1428,6 +1437,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  * @param {string} regionCallingFrom the region where the call is being placed.
  * @return {string} the formatted phone number.
  */
+
 - (NSString *)formatOutOfCountryCallingNumber:(NBPhoneNumber*)number regionCallingFrom:(NSString *)regionCallingFrom error:(NSError**)error
 {
     NSString *res = nil;
@@ -1530,7 +1540,6 @@ static NSDictionary *DIGIT_MAPPINGS;
         case NBEPhoneNumberFormatRFC3966:
             return [NSString stringWithFormat:@"%@+%@-%@%@", RFC3966_PREFIX, countryCallingCode, formattedNationalNumber, formattedExtension];
         case NBEPhoneNumberFormatNATIONAL:
-        default:
             return [NSString stringWithFormat:@"%@%@", formattedNationalNumber, formattedExtension];
     }
 }
@@ -1554,6 +1563,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     if the original number has one.
  * @return {string} the formatted phone number in its original number format.
  */
+
 - (NSString *)formatInOriginalFormat:(NBPhoneNumber*)number regionCallingFrom:(NSString *)regionCallingFrom error:(NSError **)error
 {
     NSString *res = nil;
@@ -1784,6 +1794,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  * @param {string} regionCallingFrom the region where the call is being placed.
  * @return {string} the formatted phone number.
  */
+
 - (NSString *)formatOutOfCountryKeepingAlphaChars:(NBPhoneNumber*)number regionCallingFrom:(NSString *)regionCallingFrom error:(NSError **)error
 {
     NSString *res = nil;
@@ -2142,7 +2153,8 @@ static NSDictionary *DIGIT_MAPPINGS;
             return metadata.uan;
         case NBEPhoneNumberTypeVOICEMAIL:
             return metadata.voicemail;
-        default:
+            
+        case NBEPhoneNumberTypeUNKNOWN:
             return metadata.generalDesc;
     }
 }
@@ -2490,6 +2502,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  * @throws {string} if the region is invalid
  * @private
  */
+
 - (NSNumber*)getCountryCodeForValidRegion:(NSString *)regionCode error:(NSError**)error
 {
     NBMetadataHelper *helper = [[NBMetadataHelper alloc] init];
@@ -2629,7 +2642,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     checked.
  * @return {boolean} NO if the number is possible.
  */
-- (BOOL)isPossibleNumber:(NBPhoneNumber*)number error:(NSError**)error
+- (BOOL)isPossibleNumber:(NBPhoneNumber*)number error:(NSError* __autoreleasing *)error
 {
     BOOL res = NO;
     @try {
@@ -2778,6 +2791,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     (Mountain View, CA, to be more specific).
  * @return {boolean} NO if the number is possible.
  */
+
 - (BOOL)isPossibleNumberString:(NSString *)number regionDialingFrom:(NSString *)regionDialingFrom error:(NSError**)error
 {
     NBMetadataHelper *helper = [[NBMetadataHelper alloc] init];
@@ -2806,7 +2820,7 @@ static NSDictionary *DIGIT_MAPPINGS;
     NBPhoneNumber *numberCopy = [number copy];
     NSNumber *nationalNumber = number.nationalNumber;
     do {
-        nationalNumber = [NSNumber numberWithLongLong:(long long)floor(nationalNumber.unsignedLongLongValue / 10)];
+        nationalNumber = [NSNumber numberWithDouble:floor(nationalNumber.unsignedLongLongValue / 10)];
         numberCopy.nationalNumber = [nationalNumber copy];
         if ([nationalNumber isEqualToNumber:@0] || [self isPossibleNumberWithReason:numberCopy] == NBEValidationResultTOO_SHORT) {
             return NO;
@@ -2829,7 +2843,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  * @param {!goog.string.StringBuffer} nationalNumber
  * @return {number}
  */
-- (NSNumber *)extractCountryCode:(NSString *)fullNumber nationalNumber:(NSString **)nationalNumber
+- (NSNumber *)extractCountryCode:(NSString *)fullNumber nationalNumber:(NSString * __autoreleasing *)nationalNumber
 {
     NBMetadataHelper *helper = [[NBMetadataHelper alloc] init];
     fullNumber = [helper normalizeNonBreakingSpace:fullNumber];
@@ -2902,6 +2916,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     extracted.
  * @throws {i18n.phonenumbers.Error}
  */
+
 - (NSNumber *)maybeExtractCountryCode:(NSString *)number metadata:(NBPhoneMetaData*)defaultRegionMetadata
                    nationalNumber:(NSString **)nationalNumber keepRawInput:(BOOL)keepRawInput
                       phoneNumber:(NBPhoneNumber**)phoneNumber error:(NSError**)error
@@ -3004,6 +3019,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  * @return {boolean} NO if an international prefix was present.
  * @private
  */
+
 - (BOOL)parsePrefixAsIdd:(NSString *)iddPattern sourceString:(NSString **)number
 {
     if (number == NULL) {
@@ -3053,6 +3069,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     from the number, otherwise CountryCodeSource.FROM_DEFAULT_COUNTRY if
  *     the number did not seem to be in international format.
  */
+
 - (NBECountryCodeSource)maybeStripInternationalPrefixAndNormalize:(NSString **)numberStr possibleIddPrefix:(NSString *)possibleIddPrefix
 {
     if (numberStr == NULL || (*numberStr).length == 0) {
@@ -3088,6 +3105,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  * @return {boolean} NO if a national prefix or carrier code (or both) could
  *     be extracted.
  */
+
 - (BOOL)maybeStripNationalPrefixAndCarrierCode:(NSString **)number metadata:(NBPhoneMetaData*)metadata carrierCode:(NSString **)carrierCode
 {
     if (number == NULL) {
@@ -3162,6 +3180,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     that we wish to strip the extension from.
  * @return {string} the phone extension.
  */
+
 - (NSString *)maybeStripExtension:(NSString **)number
 {
     if (number == NULL) {
@@ -3239,6 +3258,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     viable phone number or if no default region was supplied and the number
  *     is not in international format (does not start with +).
  */
+
 - (NBPhoneNumber*)parse:(NSString *)numberToParse defaultRegion:(NSString *)defaultRegion error:(NSError**)error
 {
     NSError *anError = nil;
@@ -3259,6 +3279,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  * number using +1 (AT&T is a US Carrier) as the default country code.
  * This also works for CDMA phones which don't have a sim card.
  */
+
 - (NBPhoneNumber*)parseWithPhoneCarrierRegion:(NSString *)numberToParse error:(NSError**)error
 {
     NBMetadataHelper *helper = [[NBMetadataHelper alloc] init];
@@ -3325,6 +3346,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  * @throws {i18n.phonenumbers.Error} if the string is not considered to be a
  *     viable phone number or if no default region was supplied.
  */
+
 - (NBPhoneNumber*)parseAndKeepRawInput:(NSString *)numberToParse defaultRegion:(NSString *)defaultRegion error:(NSError**)error
 {
     if ([self isValidRegionCode:defaultRegion] == NO) {
@@ -3361,6 +3383,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  * @throws {i18n.phonenumbers.Error}
  * @private
  */
+
 - (NBPhoneNumber*)parseHelper:(NSString *)numberToParse defaultRegion:(NSString *)defaultRegion
                  keepRawInput:(BOOL)keepRawInput checkRegion:(BOOL)checkRegion error:(NSError**)error
 {
@@ -3618,7 +3641,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  *     SHORT_NSN_MATCH, NSN_MATCH or EXACT_MATCH depending on the level of
  *     equality of the two numbers, described in the method definition.
  */
-- (NBEMatchType)isNumberMatch:(id)firstNumberIn second:(id)secondNumberIn error:(NSError**)error
+- (NBEMatchType)isNumberMatch:(id)firstNumberIn second:(id)secondNumberIn error:(NSError* __autoreleasing *)error
 {
     NBEMatchType res = 0;
     @try {
@@ -3793,7 +3816,7 @@ static NSDictionary *DIGIT_MAPPINGS;
  * @return {boolean} NO if the number can only be dialled from within the
  *     country.
  */
-- (BOOL)canBeInternationallyDialled:(NBPhoneNumber*)number error:(NSError**)error
+- (BOOL)canBeInternationallyDialled:(NBPhoneNumber*)number error:(NSError* __autoreleasing *)error
 {
     BOOL res = NO;
     @try {
@@ -3854,3 +3877,5 @@ static NSDictionary *DIGIT_MAPPINGS;
 }
 
 @end
+
+#pragma clang diagnostic pop
