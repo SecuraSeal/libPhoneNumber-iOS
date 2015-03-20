@@ -14,12 +14,6 @@
 #import "NBNumberFormat.h"
 #import "NSArray+NBAdditions.h"
 
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wdocumentation"
-#pragma clang diagnostic ignored "-Wextra-semi"
-#pragma clang diagnostic ignored "-Wassign-enum"
-#pragma clang diagnostic ignored "-Wsign-compare"
-
 @interface NBAsYouTypeFormatter ()
 
 @property (nonatomic, strong, readwrite) NSString *DIGIT_PLACEHOLDER_;
@@ -979,9 +973,9 @@
         return self.originalPosition_;
     }
     /** @type {number} */
-    NSInteger accruedInputIndex = 0;
+    NSUInteger accruedInputIndex = 0;
     /** @type {number} */
-    NSInteger currentOutputIndex = 0;
+    NSUInteger currentOutputIndex = 0;
     /** @type {string} */
     NSString *accruedInputWithoutFormatting = self.accruedInputWithoutFormatting_;
     /** @type {string} */
@@ -1285,5 +1279,3 @@
 }
 
 @end
-
-#pragma clang diagnostic pop

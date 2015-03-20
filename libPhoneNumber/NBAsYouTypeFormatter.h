@@ -24,9 +24,6 @@
 
 - (BOOL)formatPhoneNumber:(UITextField *)phoneNumberField newString:(NSString *)newString;
 
-- (NSString*)inputDigit:(NSString*)nextChar;
-- (NSString*)inputDigitAndRememberPosition:(NSString*)nextChar;
-
 - (NSString *)removeLastDigit;
 - (NSString *)removeLastDigitAndRememberPosition;
 
